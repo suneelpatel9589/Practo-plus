@@ -10,48 +10,56 @@ import {
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
+import deni from "../assets/Deni.jpg";
+import gyn from "../assets/gyn.jpg";
+import dio from "../assets/dio.jpg";
+import phy from "../assets/phy.jpg";
+import car from "../assets/car.jpg";
+import der from "../assets/der.jpg";
+import neu from "../assets/neu.avif";
+import opt from "../assets/opt.jpg";
 import { useNavigate } from 'react-router-dom';
 function Home() {
   const services = [
   {
     title: "Dentist",
     desc: "Teething troubles? Schedule a dental checkup",
-    img: "Deni.jpg",
+    img: deni,
   },
   {
     title: "Gynecologist",
     desc: "Women's health & pregnancy consultation",
-    img: "gyn.jpg",
+    img: gyn,
   },
   {
     title: "Dietitian",
     desc: "Healthy eating & weight management",
-    img: "dio.jpg",
+    img: dio,
   },
   {
     title: "Physiotherapist",
     desc: "Pain relief & therapy",
-    img: "phy.jpg",
+    img: phy,
   },
   {
     title: "Cardiologist",
     desc: "Heart specialist consultation",
-    img: "car.jpg",
+    img: car,
   },
   {
     title: "Dermatologist",
     desc: "Skin & hair treatments",
-    img: "der.jpg",
+    img: der,
   },
   {
     title: "Neurologist",
     desc: "Brain & nervous system care",
-    img: "neu.avif",
+    img: neu,
   },
   {
     title: "Orthopedic",
     desc: "Bone & joint specialist",
-    img: "opt.jpg",
+    img: opt,
   },
 ];
   const navigate = useNavigate();
