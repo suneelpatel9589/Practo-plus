@@ -12,7 +12,7 @@ load_dotenv(BASE_DIR / ".env")
 # SECURITY
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["practo-plus.onrender.com"]
 
 # Applications
 INSTALLED_APPS = [
@@ -134,3 +134,4 @@ DEFAULT_FROM_EMAIL = os.getenv("EMAIL_USER")
 # Razorpay
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
+
