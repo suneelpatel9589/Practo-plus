@@ -1,0 +1,9 @@
+
+.env
+*.pem
+
+__pycache__/
+*.pyc
+db.sqlite3
+Scripts/
+Lib/site-packages/

@@ -150,7 +150,7 @@ function LabtestCheckout() {
 
         modal: {
           ondismiss: function () {
-            alert("Payment popup band ho gaya");
+            toast.error("Payment cancelled by user");
           },
         },
 
@@ -166,33 +166,33 @@ function LabtestCheckout() {
         "Create Razorpay order error:",
         error.response?.data || error.message
       );
-      alert(
+      toast.error(
         error.response?.data?.error ||
           error.response?.data?.detail ||
-          "Online payment start nahi hua"
+          "payment not initiated"
       );
     }
   }
 
   async function placeOrder() {
     if (!token) {
-      alert("Login required");
+      toast.error("Login required");
       navigate("/login");
       return;
     }
 
     if (!form.doctor) {
-      alert("Doctor select karo");
+      toast.error("Please select a doctor for sample collection");
       return;
     }
 
     if (!form.full_name || !form.phone || !form.address || !form.city || !form.pincode) {
-      alert("Please fill all fields");
+      toast.error("Please fill all fields");
       return;
     }
 
     if (cart.length === 0) {
-      alert("No lab tests selected");
+      toast.error("No lab tests selected");
       return;
     }
 
@@ -222,7 +222,7 @@ function LabtestCheckout() {
         const paymentId = res.data?.payment_id;
 
         if (!paymentId) {
-          alert("Payment id nahi mila");
+          toast.error("Payment initiation failed. Please try again.");
           return;
         }
 
@@ -249,7 +249,7 @@ function LabtestCheckout() {
       }
 
       localStorage.removeItem("labtest_cart");
-      alert(res.data?.message || "Order successfully booked");
+      toast.success(res.data?.message || "Order successfully booked");
 
       const orderId = res.data?.id;
       if (orderId) {
@@ -260,12 +260,12 @@ function LabtestCheckout() {
     } catch (error) {
       console.error("Lab order create error:", error.response?.data || error.message);
 
-      alert(
+      toast.error(
         error.response?.data?.detail ||
           error.response?.data?.error ||
           error.response?.data?.items?.[0] ||
           error.response?.data?.doctor?.[0] ||
-          "Booking nahi hui"
+          "Order placement failed. Please check your details and try again."
       );
     } finally {
       setLoading(false);
