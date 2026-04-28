@@ -1,7 +1,6 @@
-import axios from "axios";
 
-const API_BASE = "http://127.0.0.1:8000";
 import { toast } from "react-toastify";
+import API from "../api";
 
 async function startRazorpayPayment({
   paymentId,
@@ -11,13 +10,13 @@ async function startRazorpayPayment({
   onSuccess,
 }) {
   if (!window.Razorpay) {
-    toast.error("Razorpay  not loaded");
+    toast.error("Razorpay  not loaded. Please try again later.");
     return;
   }
 
   try {
-    const orderRes = await axios.post(
-      `${API_BASE}/payment-gateway/create-order/`,
+    const orderRes = await API.post(
+      `/payment-gateway/create-order/`,
       { payment_id: paymentId },
       {
         headers: {
@@ -38,8 +37,8 @@ async function startRazorpayPayment({
       order_id: orderData.razorpay_order_id,
       handler: async function (response) {
         try {
-          const verifyRes = await axios.post(
-            `${API_BASE}/payment-gateway/verify/`,
+          const verifyRes = await API.post(
+            `/payment-gateway/verify/`,
             {
               payment_id: paymentId,
               razorpay_order_id: response.razorpay_order_id,

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 import {
   ShoppingBag,
@@ -18,6 +18,7 @@ import {
   Truck,
   Box,
 } from "lucide-react";
+import API from "../api";
 
 function AdminOrders() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
@@ -40,7 +41,7 @@ function AdminOrders() {
       setError("");
       orders.length === 0 ? setLoading(true) : setRefreshing(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/orders/", {
+      const res = await API.get("/orders/", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -72,8 +73,8 @@ function AdminOrders() {
     try {
       setUpdatingId(orderId);
 
-      await axios.patch(
-        `http://127.0.0.1:8000/orders/${orderId}/update-status/`,
+      await API.patch(
+        `/orders/${orderId}/update-status/`,
         { status: nextStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -89,7 +90,7 @@ function AdminOrders() {
       toast.error(
         err.response?.data?.detail ||
           err.response?.data?.error ||
-          "Order status update failed"
+          "Order update failed"
       );
     } finally {
       setUpdatingId(null);
@@ -194,8 +195,7 @@ function AdminOrders() {
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm text-slate-300 sm:text-base">
-                Manage orders, payments, delivery status and medicines from one
-                clean dashboard.
+                Manage orders, payments, delivery status and medicines from one place.
               </p>
             </div>
 

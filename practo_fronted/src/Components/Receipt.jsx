@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+
 import {
   ArrowLeft,
   CalendarDays,
@@ -17,6 +17,8 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import API from "../api";
+import { toast } from "react-toastify";
 
 function Receipt() {
   const { id } = useParams();
@@ -33,7 +35,7 @@ function Receipt() {
     try {
       setLoading(true);
 
-      const res = await axios.get(`http://127.0.0.1:8000/orders/${id}/`, {
+      const res = await API.get(`/orders/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -42,7 +44,7 @@ function Receipt() {
       setOrder(res.data);
     } catch (error) {
       console.error("Receipt load error:", error.response?.data || error.message);
-      alert("Receipt load nahi hui");
+      toast.error('Failed to load receipt. Please try again later.');
     } finally {
       setLoading(false);
     }

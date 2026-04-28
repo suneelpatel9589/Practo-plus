@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -11,6 +11,7 @@ import {
   FileText,
   ImagePlus,
 } from "lucide-react";
+import API from "../api";
 
 function EditDoctor() {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ function EditDoctor() {
   useEffect(() => {
     async function fetchDoctor() {
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/doctors/${id}/`, {
+        const res = await API.get(`/doctors/${id}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -114,7 +115,7 @@ function EditDoctor() {
         data.append("image", formData.image);
       }
 
-      await axios.put(`http://127.0.0.1:8000/doctors/${id}/`, data, {
+      await API.put(`/doctors/${id}/`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -197,7 +198,7 @@ function EditDoctor() {
                             preview ||
                             (oldImage?.startsWith("http")
                               ? oldImage
-                              : `http://127.0.0.1:8000/media/${oldImage}`)
+                              : `${API.defaults.baseURL}${oldImage}`)
                           }
                           alt="Doctor"
                           className="h-full w-full object-cover"

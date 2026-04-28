@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ArrowLeft, User, Stethoscope, Calendar } from "lucide-react";
 import { toast } from "react-toastify";
+import API from "../api";
 
 function MyAppointmentReceipt() {
   const { id } = useParams();
@@ -24,8 +24,8 @@ function MyAppointmentReceipt() {
     }
 
     try {
-      const res = await axios.get(
-        `http://127.0.0.1:8000/appointments/${id}/`,
+      const res = await API.get(
+        `/appointments/${id}/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -36,7 +36,7 @@ function MyAppointmentReceipt() {
       setData(res.data);
 
       // ✅ SUCCESS TOAST
-      toast.success("Receipt loaded successfully 📄");
+      toast.success("Receipt loaded successfully ");
     } catch (err) {
       console.error(err.response?.data || err.message);
 
@@ -135,7 +135,7 @@ function MyAppointmentReceipt() {
 
           {/* SUCCESS BOX */}
           <div className="mt-6 rounded-xl bg-green-50 p-4 text-green-700 text-center font-semibold">
-            Appointment booked successfully 🎉
+            Appointment booked successfully 
           </div>
         </div>
       </div>

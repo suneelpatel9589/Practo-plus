@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   CheckCircle2,
   XCircle,
@@ -9,6 +8,8 @@ import {
   RefreshCcw,
   Loader2,
 } from "lucide-react";
+import API from "../api";
+import { toast } from "react-toastify";
 
 function AdminDoctors() {
   const token = localStorage.getItem("access");
@@ -27,10 +28,10 @@ function AdminDoctors() {
       setLoading(true);
       setError("");
 
-      const res = await axios.get("http://127.0.0.1:8000/doctors/");
+      const res = await API.get("/doctors/");
       setDoctors(res.data);
     } catch (err) {
-      setError("Failed to fetch doctors");
+      toast.error("Failed to fetch doctors");
     } finally {
       setLoading(false);
     }
@@ -39,8 +40,8 @@ function AdminDoctors() {
   async function approveDoctor(id) {
     try {
       setActionLoading(`approve-${id}`);
-      await axios.patch(
-        `http://127.0.0.1:8000/doctors/${id}/approve/`,
+      await API.patch(
+        `/doctors/${id}/approve/`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -48,7 +49,7 @@ function AdminDoctors() {
       );
       fetchDoctors();
     } catch (err) {
-      setError("Failed to approve doctor");
+      toast.error("Failed to approve doctor");
     } finally {
       setActionLoading(null);
     }
@@ -57,8 +58,8 @@ function AdminDoctors() {
   async function rejectDoctor(id) {
     try {
       setActionLoading(`reject-${id}`);
-      await axios.patch(
-        `http://127.0.0.1:8000/doctors/${id}/reject/`,
+      await API.patch(
+        `/doctors/${id}/reject/`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -66,7 +67,7 @@ function AdminDoctors() {
       );
       fetchDoctors();
     } catch (err) {
-      setError("Failed to reject doctor");
+      toast.error("Failed to reject doctor");
     } finally {
       setActionLoading(null);
     }
@@ -88,7 +89,7 @@ function AdminDoctors() {
 
               <h1 className="text-3xl font-bold sm:text-4xl">Manage Doctors</h1>
               <p className="mt-2 max-w-2xl text-sm text-slate-200 sm:text-base">
-                Review, approve, and manage all doctors from one clean and responsive dashboard.
+                Review, approve, and manage doctor applications to ensure quality healthcare services on our platform.
               </p>
             </div>
 

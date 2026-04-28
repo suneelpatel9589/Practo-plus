@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 import {
   Wallet,
@@ -15,6 +15,7 @@ import {
   BadgeCheck,
   ReceiptText,
 } from "lucide-react";
+import API from "../api";
 
 function AdminPayments() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
@@ -32,7 +33,7 @@ function AdminPayments() {
     try {
       payments.length === 0 ? setLoading(true) : setRefreshing(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/payments/", {
+      const res = await API.get("/payments/", {
         headers: { Authorization: `Bearer ${token}` },
       });
 

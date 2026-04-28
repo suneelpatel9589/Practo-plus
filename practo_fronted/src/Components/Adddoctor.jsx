@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from "react";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 import {
   Upload,
   UserRound,
@@ -12,6 +13,7 @@ import {
   FileText,
   Sparkles,
 } from "lucide-react";
+import API from "../api";
 
 function AddDoctor() {
   const navigate = useNavigate();
@@ -120,7 +122,7 @@ function AddDoctor() {
         data.append("image", formData.image);
       }
 
-      const response = await axios.post("http://127.0.0.1:8000/doctors/", data, {
+      const response = await API.post("/doctors/", data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

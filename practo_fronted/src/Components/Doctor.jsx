@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -11,6 +10,8 @@ import {
   UserRound,
   CalendarCheck2,
 } from "lucide-react";
+import API from "../api";
+
 
 export default function DoctorPage() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function DoctorPage() {
     try {
       setLoadingDoctors(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/doctors/");
+      const res = await API.get("/doctors/");
 
       const mappedDoctors = res.data.map((item) => ({
         id: item.id,
@@ -212,7 +213,7 @@ export default function DoctorPage() {
                         src={
                           doc.image.startsWith("http")
                             ? doc.image
-                            : `http://127.0.0.1:8000/media/${doc.image}`
+                            : `${import.meta.env.VITE_API_URL}/media/${doc.image}`
                         }
                         alt={doc.name}
                         className="h-full w-full object-cover transition duration-300 group-hover:scale-105"

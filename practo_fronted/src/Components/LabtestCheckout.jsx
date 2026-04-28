@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
 import {
   MapPin,
@@ -11,6 +10,7 @@ import {
   FlaskConical,
   Stethoscope,
 } from "lucide-react";
+import API from "../api";
 
 function LabtestCheckout() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ function LabtestCheckout() {
   const cart = JSON.parse(localStorage.getItem("labtest_cart") || "[]");
 
   const COMMISSION_RATE = 0.08;
-  const API_BASE = "http://127.0.0.1:8000";
+  
 
   const [loading, setLoading] = useState(false);
   const [doctors, setDoctors] = useState([]);
@@ -93,13 +93,13 @@ function LabtestCheckout() {
     onSuccess,
   }) {
     if (!window.Razorpay) {
-      alert("Razorpay script load nahi hui");
+      toast.error("Razorpay SDK not loaded. Please try again later.");
       return;
     }
 
     try {
-      const orderRes = await axios.post(
-        `${API_BASE}/payment-gateway/create-order/`,
+      const orderRes = await API.post(
+        "/payment-gateway/create-order/",
         { payment_id: paymentId },
         {
           headers: {
@@ -120,8 +120,8 @@ function LabtestCheckout() {
 
         handler: async function (response) {
           try {
-            const verifyRes = await axios.post(
-              `${API_BASE}/payment-gateway/verify/`,
+            const verifyRes = await API.post(
+              "/payment-gateway/verify-payment/",
               {
                 payment_id: paymentId,
                 razorpay_order_id: response.razorpay_order_id,
@@ -140,10 +140,10 @@ function LabtestCheckout() {
             }
           } catch (error) {
             console.error("Verify error:", error.response?.data || error.message);
-            alert(
+            toast.error(
               error.response?.data?.error ||
                 error.response?.data?.detail ||
-                "Payment verify nahi hua"
+                "Payment verification failed. Please contact support."
             );
           }
         },
@@ -212,7 +212,7 @@ function LabtestCheckout() {
         })),
       };
 
-      const res = await axios.post(`${API_BASE}/lab-orders/`, payload, {
+      const res = await API.post("/lab-orders/", payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -232,8 +232,8 @@ function LabtestCheckout() {
           onSuccess: (data) => {
             localStorage.removeItem("labtest_cart");
 
-            alert(
-              `${data?.message || "Payment successful and order successfully booked"}`
+            toast.success(
+              `${data?.message || "Order successfully booked and payment verified"}`
             );
 
             const orderId = res.data?.id;

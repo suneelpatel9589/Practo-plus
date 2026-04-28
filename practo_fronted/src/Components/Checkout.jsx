@@ -1,8 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 import {
+
+
   MapPin,
   Phone,
   User,
@@ -10,13 +12,14 @@ import {
   ArrowLeft,
   PackageCheck,
 } from "lucide-react";
+import API from './../api';
 
 function Checkout() {
   const navigate = useNavigate();
   const token = localStorage.getItem("access") || localStorage.getItem("token");
   const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
   const cart = JSON.parse(localStorage.getItem("medicine_cart") || "[]");
-  const API_BASE = "http://127.0.0.1:8000";
+  
 
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -91,13 +94,13 @@ function Checkout() {
     onSuccess,
   }) {
     if (!window.Razorpay) {
-      alert("Razorpay script load nahi hui");
+      toast.error("Razorpay SDK not loaded, please try again later");
       return;
     }
 
     try {
-      const orderRes = await axios.post(
-        `${API_BASE}/payment-gateway/create-order/`,
+      const orderRes = await API.post(
+        "/payment-gateway/create-order/",
         { payment_id: paymentId },
         {
           headers: {
@@ -118,8 +121,8 @@ function Checkout() {
 
         handler: async function (response) {
           try {
-            const verifyRes = await axios.post(
-              `${API_BASE}/payment-gateway/verify/`,
+            const verifyRes = await API.post(
+              "/payment-gateway/verify-payment/",
               {
                 payment_id: paymentId,
                 razorpay_order_id: response.razorpay_order_id,

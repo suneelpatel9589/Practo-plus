@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 import {
   CalendarDays,
@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   XCircle,
 } from "lucide-react";
+import API from "../api";
 
 function DoctorAppointments() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
@@ -25,7 +26,7 @@ function DoctorAppointments() {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/appointments/", {
+      const res = await API.get("/appointments/", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -71,8 +72,8 @@ function DoctorAppointments() {
     try {
       setActionLoading((prev) => ({ ...prev, [id]: actionType }));
 
-      const res = await axios.patch(
-        `http://127.0.0.1:8000/appointments/${id}/${endpointMap[actionType]}/`,
+      const res = await API.patch(
+        `/appointments/${id}/${endpointMap[actionType]}/`,
         {},
         {
           headers: {

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import {
   CalendarDays,
@@ -16,6 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import API from "../api";
 
 function LabtestOrders() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
@@ -45,7 +45,7 @@ function LabtestOrders() {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/lab-orders/", {
+      const res = await API.get("/lab-orders/", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -69,8 +69,8 @@ function LabtestOrders() {
     try {
       setStatusLoading(`${id}-${status}`);
 
-      const res = await axios.patch(
-        `http://127.0.0.1:8000/lab-orders/${id}/update-status/`,
+      const res = await API.patch(
+        `/lab-orders/${id}/update-status/`,
         { status },
         {
           headers: {

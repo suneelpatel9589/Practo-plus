@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import {
   ArrowLeft,
@@ -18,6 +17,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import API from "../api";
 
 function LabtestReceipt() {
   const { id } = useParams();
@@ -35,7 +35,7 @@ function LabtestReceipt() {
     try {
       setLoading(true);
 
-      const res = await axios.get(`http://127.0.0.1:8000/lab-orders/${id}/`, {
+      const res = await API.get(`/lab-orders/${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

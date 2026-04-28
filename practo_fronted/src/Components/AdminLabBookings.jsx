@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 import {
   FlaskConical,
@@ -16,6 +16,9 @@ import {
   IndianRupee,
   TestTubeDiagonal,
 } from "lucide-react";
+import API from "../api";
+
+
 
 function AdminLabBookings() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
@@ -35,7 +38,7 @@ function AdminLabBookings() {
     try {
       bookings.length === 0 ? setLoading(true) : setRefreshing(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/lab-orders/", {
+      const res = await API.get("/lab-orders/", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -66,8 +69,8 @@ function AdminLabBookings() {
     try {
       setUpdatingId(id);
 
-      const res = await axios.patch(
-        `http://127.0.0.1:8000/lab-orders/${id}/update-status/`,
+      const res = await API.patch(
+        `/lab-orders/${id}/update-status/`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );

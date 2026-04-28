@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Mail, LockKeyhole, ShieldCheck, Stethoscope } from "lucide-react";
 import { toast } from "react-toastify";
+import API from "../api";
 
 function Login() {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ function Login() {
     try {
       setLoading(true);
 
-      const response = await axios.post("http://127.0.0.1:8000/login/", {
+      const response = await API.post("/login/", {
         email: form.email,
         password: form.password,
       });
@@ -53,7 +53,7 @@ function Login() {
       toast.error(
         error.response?.data?.error ||
           error.response?.data?.non_field_errors?.[0] ||
-          "Login failed ❌"
+          "Login failed. Please check your credentials and try again."
       );
     } finally {
       setLoading(false);

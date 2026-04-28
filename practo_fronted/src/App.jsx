@@ -37,6 +37,7 @@ import AdminAppointments from './Components/AdminAppointments';
 import AdminLabBookings from "./Components/AdminLabBookings";
 import AdminPayments from "./Components/AdminPayments";
 
+
 function App() {
   return (
     <>
