@@ -838,62 +838,46 @@ def login_user(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def send_otp(request):
-    try:
-        first_name = request.data.get("first_name", "")
-        last_name = request.data.get("last_name", "")
-        email = request.data.get("email")
-        phone = request.data.get("phone")
-        role = request.data.get("role", "PATIENT")
-        password = request.data.get("password")
+    first_name = request.data.get("first_name", "")
+    last_name = request.data.get("last_name", "")
+    email = request.data.get("email")
+    phone = request.data.get("phone")
+    role = request.data.get("role", "PATIENT")
+    password = request.data.get("password")
 
-        if not email or not password:
-            return Response({"error": "Email and password are required"}, status=400)
+    if not email or not password:
+        return Response({"error": "Email and password are required"}, status=400)
 
-        if str(role).upper() == "ADMIN":
-            return Response({"error": "Admin signup not allowed from public form"}, status=403)
+    if str(role).upper() == "ADMIN":
+        return Response({"error": "Admin signup not allowed"}, status=403)
 
-        if User.objects.filter(email=email).exists():
-            return Response({"error": "Email already registered"}, status=400)
+    if User.objects.filter(email=email).exists():
+        return Response({"error": "Email already registered"}, status=400)
 
-        username = email.split("@")[0]
+    otp_code = generate_otp()
 
-        user = User.objects.create(
-            email=email,
-            username=username,
-            first_name=first_name,
-            last_name=last_name,
-            phone=phone,
-            role=str(role).upper(),
-        )
-        user.set_password(password)
-        user.save()
+    # पुराना pending OTP delete कर दो
+    OTP.objects.filter(email=email, is_verified=False).delete()
 
-        otp_code = generate_otp()
-        OTP.objects.create(user=user, otp_code=otp_code)
+    OTP.objects.create(
+        email=email,
+        otp_code=otp_code,
+        first_name=first_name,
+        last_name=last_name,
+        phone=phone,
+        role=str(role).upper(),
+        password=password,
+    )
 
-        subject = "Practo Service - OTP Verification Code"
-        message = (
-            f"Hello {first_name or 'User'},\n\n"
-            f"Your OTP is {otp_code}\n"
-            f"This OTP is valid for 5 minutes.\n\n"
-            f"Do not share this OTP with anyone.\n\n"
-            f"Regards,\nPracto Service Team"
-        )
+    send_mail(
+        subject="Practo Service - OTP Verification Code",
+        message=f"Hello {first_name or 'User'},\n\nYour OTP is {otp_code}\nValid for 5 minutes.",
+        from_email="Practo Service <suneelpatel9589@gmail.com>",
+        recipient_list=[email],
+        fail_silently=False,
+    )
 
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email="Practo Service <suneelpatel9589@gmail.com>",
-            recipient_list=[email],
-            fail_silently=False,
-        )
-
-        return Response({"message": "OTP sent to email successfully"}, status=200)
-
-    except Exception as e:
-        return Response({"error": str(e)}, status=500)
-
-
+    return Response({"message": "OTP sent successfully"}, status=200)
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def verify_otp(request):
@@ -903,12 +887,11 @@ def verify_otp(request):
     if not email or not otp_code:
         return Response({"error": "Email and OTP are required"}, status=400)
 
-    try:
-        user = User.objects.get(email=email)
-    except User.DoesNotExist:
-        return Response({"error": "User not found"}, status=404)
-
-    otp = OTP.objects.filter(user=user, otp_code=otp_code, is_verified=False).last()
+    otp = OTP.objects.filter(
+        email=email,
+        otp_code=otp_code,
+        is_verified=False
+    ).last()
 
     if not otp:
         return Response({"error": "Invalid OTP"}, status=400)
@@ -916,13 +899,30 @@ def verify_otp(request):
     if otp.created_at < timezone.now() - timedelta(minutes=5):
         return Response({"error": "OTP expired"}, status=400)
 
+    if User.objects.filter(email=email).exists():
+        return Response({"error": "Email already registered"}, status=400)
+
+    username = email.split("@")[0]
+
+    user = User.objects.create(
+        email=email,
+        username=username,
+        first_name=otp.first_name,
+        last_name=otp.last_name,
+        phone=otp.phone,
+        role=otp.role,
+    )
+    user.set_password(otp.password)
+    user.save()
+
     otp.is_verified = True
+    otp.user = user
     otp.save()
 
     refresh = RefreshToken.for_user(user)
 
     return Response({
-        "message": "OTP verified successfully",
+        "message": "User registered successfully",
         "access": str(refresh.access_token),
         "refresh": str(refresh),
         "user": {
