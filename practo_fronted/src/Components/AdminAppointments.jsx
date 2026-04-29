@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { toast } from "react-toastify";
-
 import {
   CalendarDays,
   Clock3,
@@ -14,7 +14,6 @@ import {
   XCircle,
   ClipboardCheck,
 } from "lucide-react";
-import API from "../api";
 
 function AdminAppointments() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
@@ -33,7 +32,7 @@ function AdminAppointments() {
     try {
       appointments.length === 0 ? setLoading(true) : setRefreshing(true);
 
-      const res = await API.get("/appointments/", {
+      const res = await axios.get("http://127.0.0.1:8000/appointments/", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -50,8 +49,8 @@ function AdminAppointments() {
     try {
       setUpdatingId(`${id}-${action}`);
 
-      const res = await API.patch(
-        `/appointments/${id}/${action}/`,
+      const res = await axios.patch(
+        `http://127.0.0.1:8000/appointments/${id}/${action}/`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

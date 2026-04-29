@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-
+import axios from "axios";
 import {
   Stethoscope,
   FlaskConical,
@@ -10,11 +10,10 @@ import {
   ClipboardList,
   Package,
 } from "lucide-react";
-import API from "../api";
 
 function HealthRecord() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
-
+  const API_BASE = "http://127.0.0.1:8000";
 
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("appointments");
@@ -112,7 +111,7 @@ function HealthRecord() {
       let finalPrescriptions = [];
 
       try {
-        const res = await API.get("/health-records/", authHeaders());
+        const res = await axios.get(`${API_BASE}/health-records/`, authHeaders());
         const normalized = normalizeHealthData(res.data || {});
 
         finalAppointments = normalized.appointments;
@@ -130,9 +129,9 @@ function HealthRecord() {
         finalPrescriptions.length === 0
       ) {
         const [appointmentsRes, labOrdersRes, ordersRes] = await Promise.allSettled([
-          API.get(`/appointments/`, authHeaders()),
-          API.get(`/lab-orders/`, authHeaders()),
-          API.get(`/medicine-orders/`, authHeaders()),
+          axios.get(`${API_BASE}/appointments/`, authHeaders()),
+          axios.get(`${API_BASE}/lab-orders/`, authHeaders()),
+          axios.get(`${API_BASE}/orders/`, authHeaders()),
         ]);
 
         if (appointmentsRes.status === "fulfilled") {
@@ -330,7 +329,7 @@ function HealthRecord() {
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h3 className="text-lg font-bold text-slate-800">
-                  Lab Order {item.id || index + 1}
+                  Lab Order #{item.id || index + 1}
                 </h3>
 
                 <div

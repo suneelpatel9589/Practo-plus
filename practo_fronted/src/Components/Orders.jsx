@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import {
   Package,
   CalendarDays,
@@ -15,7 +16,6 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import API from "../api";
 
 function Orders() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
@@ -38,7 +38,7 @@ function Orders() {
       if (orders.length === 0) setLoading(true);
       else setRefreshing(true);
 
-      const res = await API.get("/orders/", {
+      const res = await axios.get("http://127.0.0.1:8000/orders/", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -59,8 +59,8 @@ function Orders() {
     try {
       setStatusLoading(`${id}-${status}`);
 
-      const res = await API.patch(
-        `/orders/${id}/update_status/`,
+      const res = await axios.patch(
+        `http://127.0.0.1:8000/orders/${id}/update-status/`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -203,7 +203,7 @@ function Orders() {
               <div className="rounded-[20px] bg-slate-50 p-8 text-center">
                 <h3 className="text-lg font-semibold text-slate-800">No orders found</h3>
                 <p className="mt-2 text-sm text-slate-500">
-                  Try adjusting your search or refresh the list.
+                  Aapne abhi tak koi medicine order nahi kiya
                 </p>
               </div>
             ) : (

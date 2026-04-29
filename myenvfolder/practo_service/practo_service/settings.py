@@ -12,7 +12,11 @@ load_dotenv(BASE_DIR / ".env")
 # SECURITY
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
-ALLOWED_HOSTS = ["practo-plus.onrender.com"]
+ALLOWED_HOSTS = [
+    'localhost',
+    "127.0.0.1",
+    "practo-plus.onrender.com",
+]
 
 # Applications
 INSTALLED_APPS = [

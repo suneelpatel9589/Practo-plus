@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import API from './../api';
+import axios from "axios";
 import { toast } from "react-toastify";
 import {
-
   Users,
   ShieldCheck,
   UserCheck,
@@ -18,7 +17,6 @@ import {
   Trash2,
   Save,
 } from "lucide-react";
-
 
 function AdminUsers() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
@@ -43,7 +41,7 @@ function AdminUsers() {
       if (users.length === 0) setLoading(true);
       else setRefreshing(true);
 
-      const res = await API.get("/admin-users/", {
+      const res = await axios.get("http://127.0.0.1:8000/admin-users/", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -56,8 +54,8 @@ function AdminUsers() {
       });
       setRoleDrafts(drafts);
     } catch {
-      setError("Unable to load users. Please try again later.");
-      toast.error("unable to fetch users. Please try again later.");
+      setError("Failed to fetch users");
+      toast.error("Failed to fetch users");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -74,8 +72,8 @@ function AdminUsers() {
     try {
       setSavingId(userId);
 
-      const res = await API.patch(
-        `/admin-users/${userId}/`,
+      const res = await axios.patch(
+        `http://127.0.0.1:8000/admin-users/${userId}/`,
         { role: newRole },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -101,7 +99,7 @@ function AdminUsers() {
     try {
       setDeletingId(userId);
 
-      await API.delete(`/admin-users/${userId}/`, {
+      await axios.delete(`http://127.0.0.1:8000/admin-users/${userId}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

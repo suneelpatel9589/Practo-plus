@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import axios from "axios";
 import {
   Users,
   Stethoscope,
@@ -14,9 +14,6 @@ import {
   Wallet,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import API from "../api";
-import { toast } from "react-toastify";
-
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -33,13 +30,13 @@ function AdminDashboard() {
 
   async function fetchDashboard() {
     try {
-      const res = await API.get("/admin-dashboard/", {
+      const res = await axios.get("http://127.0.0.1:8000/admin-dashboard/", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(res.data);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to load dashboard data. Please try again.");
+      alert("Admin data load nahi hua");
     } finally {
       setLoading(false);
     }

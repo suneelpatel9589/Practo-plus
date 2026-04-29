@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -22,7 +22,6 @@ import {
   Activity,
   ClipboardList,
 } from "lucide-react";
-import API from "../api";
 
 function DoctorDashboard() {
   const navigate = useNavigate();
@@ -58,9 +57,9 @@ function DoctorDashboard() {
   async function fetchDashboardData() {
     try {
       const [doctorRes, appointmentRes, labBookingRes] = await Promise.all([
-        API.get("/doctors/"),
-        API.get("/appointments/", authConfig),
-        API.get("/lab-orders/", authConfig),
+        axios.get("http://127.0.0.1:8000/doctors/"),
+        axios.get("http://127.0.0.1:8000/appointments/", authConfig),
+        axios.get("http://127.0.0.1:8000/lab-orders/", authConfig),
       ]);
 
       const myDoctor = (doctorRes.data || []).find(
@@ -177,8 +176,8 @@ function DoctorDashboard() {
     try {
       setActionLoading((prev) => ({ ...prev, [id]: actionType }));
 
-      const res = await API.patch(
-        `/appointments/${id}/${actionMap[actionType]}/`,
+      const res = await axios.patch(
+        `http://127.0.0.1:8000/appointments/${id}/${actionMap[actionType]}/`,
         {},
         authConfig
       );
@@ -206,8 +205,8 @@ function DoctorDashboard() {
     try {
       setLabActionLoading((prev) => ({ ...prev, [id]: newStatus }));
 
-      const res = await API.patch(
-        `/lab-orders/${id}/`,
+      const res = await axios.patch(
+        `http://127.0.0.1:8000/lab-orders/${id}/update-status/`,
         { status: newStatus },
         authConfig
       );
@@ -336,7 +335,7 @@ function DoctorDashboard() {
                       src={
                         doctor.image.startsWith("http")
                           ? doctor.image
-                          : `${API.defaults.baseURL}${doctor.image}`
+                          : `http://127.0.0.1:8000/media/${doctor.image}`
                       }
                       alt={doctor.doctor_name}
                       className="h-full w-full object-cover"

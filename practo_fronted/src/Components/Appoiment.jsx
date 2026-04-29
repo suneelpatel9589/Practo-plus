@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -10,7 +10,6 @@ import {
   IndianRupee,
   CreditCard,
 } from "lucide-react";
-import API from "../api";
 
 function Appoiment() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
@@ -27,7 +26,7 @@ function Appoiment() {
     payment_method: "COD",
   });
 
-
+  const API_BASE = "http://127.0.0.1:8000";
 
   useEffect(() => {
     fetchDoctors();
@@ -51,7 +50,7 @@ function Appoiment() {
   async function fetchDoctors() {
     try {
       setLoadingDoctors(true);
-      const res = await API.get("/doctors/");
+      const res = await axios.get(`${API_BASE}/doctors/`);
       setDoctors(res.data || []);
     } catch (error) {
       console.error("Doctors fetch error:", error.response?.data || error.message);
@@ -92,8 +91,8 @@ function Appoiment() {
     }
 
     try {
-      const orderRes = await API.post(
-        "/payment-gateway/create-order/",
+      const orderRes = await axios.post(
+        `${API_BASE}/payment-gateway/create-order/`,
         { payment_id: paymentId },
         {
           headers: {
@@ -115,8 +114,8 @@ function Appoiment() {
 
         handler: async function (response) {
           try {
-            const verifyRes = await API.post(
-              "/payment-gateway/verify-payment/",
+            const verifyRes = await axios.post(
+              `${API_BASE}/payment-gateway/verify/`,
               {
                 payment_id: paymentId,
                 razorpay_order_id: response.razorpay_order_id,
@@ -202,7 +201,7 @@ function Appoiment() {
         payment_method: form.payment_method,
       };
 
-      const res = await API.post("/appointments/", payload, {
+      const res = await axios.post(`${API_BASE}/appointments/`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

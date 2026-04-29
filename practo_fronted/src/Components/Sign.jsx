@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { toast } from "react-toastify";
 
 import {
@@ -10,7 +11,6 @@ import {
   ShieldCheck,
   Stethoscope,
 } from "lucide-react";
-import API from "../api";
 
 function Sign() {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ function Sign() {
     try {
       setLoading(true);
 
-      const res = await API.post("/send-otp/", {
+      const res = await axios.post("http://127.0.0.1:8000/send-otp/", {
         first_name: form.first_name,
         last_name: form.last_name,
         email: form.email,
@@ -80,7 +80,7 @@ function Sign() {
     try {
       setLoading(true);
 
-      const res = await API.post("/verify-otp/", {
+      const res = await axios.post("http://127.0.0.1:8000/verify-otp/", {
         email: form.email,
         otp: form.otp,
       });
@@ -114,14 +114,14 @@ function Sign() {
 
   async function resendOTP() {
     if (!form.email) {
-      toast.error("Email is required to resend OTP");
+      toast.error("Email is missing");
       return;
     }
 
     try {
       setLoading(true);
 
-      const res = await API.post("/send-otp/", {
+      const res = await axios.post("http://127.0.0.1:8000/send-otp/", {
         first_name: form.first_name,
         last_name: form.last_name,
         email: form.email,
@@ -157,7 +157,7 @@ function Sign() {
             </h1>
 
             <p className="mt-4 max-w-md text-sm leading-6 text-sky-50/90">
-              Sign up to access personalized health services, book appointments, and manage your health records.
+              Register securely with OTP verification and start your healthcare journey.
             </p>
           </div>
 

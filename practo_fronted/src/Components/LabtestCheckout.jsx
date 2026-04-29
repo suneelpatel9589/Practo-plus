@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { toast } from "react-toastify";
 import {
   MapPin,
@@ -10,7 +11,6 @@ import {
   FlaskConical,
   Stethoscope,
 } from "lucide-react";
-import API from "../api";
 
 function LabtestCheckout() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ function LabtestCheckout() {
   const cart = JSON.parse(localStorage.getItem("labtest_cart") || "[]");
 
   const COMMISSION_RATE = 0.08;
-  
+  const API_BASE = "http://127.0.0.1:8000";
 
   const [loading, setLoading] = useState(false);
   const [doctors, setDoctors] = useState([]);
@@ -93,13 +93,13 @@ function LabtestCheckout() {
     onSuccess,
   }) {
     if (!window.Razorpay) {
-      toast.error("Razorpay SDK not loaded. Please try again later.");
+      alert("Razorpay script load nahi hui");
       return;
     }
 
     try {
-      const orderRes = await API.post(
-        "/payment-gateway/create-order/",
+      const orderRes = await axios.post(
+        `${API_BASE}/payment-gateway/create-order/`,
         { payment_id: paymentId },
         {
           headers: {
@@ -120,8 +120,8 @@ function LabtestCheckout() {
 
         handler: async function (response) {
           try {
-            const verifyRes = await API.post(
-              "/payment-gateway/verify-payment/",
+            const verifyRes = await axios.post(
+              `${API_BASE}/payment-gateway/verify/`,
               {
                 payment_id: paymentId,
                 razorpay_order_id: response.razorpay_order_id,
@@ -140,17 +140,17 @@ function LabtestCheckout() {
             }
           } catch (error) {
             console.error("Verify error:", error.response?.data || error.message);
-            toast.error(
+            alert(
               error.response?.data?.error ||
                 error.response?.data?.detail ||
-                "Payment verification failed. Please contact support."
+                "Payment verify nahi hua"
             );
           }
         },
 
         modal: {
           ondismiss: function () {
-            toast.error("Payment cancelled by user");
+            alert("Payment popup band ho gaya");
           },
         },
 
@@ -166,33 +166,33 @@ function LabtestCheckout() {
         "Create Razorpay order error:",
         error.response?.data || error.message
       );
-      toast.error(
+      alert(
         error.response?.data?.error ||
           error.response?.data?.detail ||
-          "payment not initiated"
+          "Online payment start nahi hua"
       );
     }
   }
 
   async function placeOrder() {
     if (!token) {
-      toast.error("Login required");
+      alert("Login required");
       navigate("/login");
       return;
     }
 
     if (!form.doctor) {
-      toast.error("Please select a doctor for sample collection");
+      alert("Doctor select karo");
       return;
     }
 
     if (!form.full_name || !form.phone || !form.address || !form.city || !form.pincode) {
-      toast.error("Please fill all fields");
+      alert("Please fill all fields");
       return;
     }
 
     if (cart.length === 0) {
-      toast.error("No lab tests selected");
+      alert("No lab tests selected");
       return;
     }
 
@@ -212,7 +212,7 @@ function LabtestCheckout() {
         })),
       };
 
-      const res = await API.post("/lab-orders/", payload, {
+      const res = await axios.post(`${API_BASE}/lab-orders/`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -222,7 +222,7 @@ function LabtestCheckout() {
         const paymentId = res.data?.payment_id;
 
         if (!paymentId) {
-          toast.error("Payment initiation failed. Please try again.");
+          alert("Payment id nahi mila");
           return;
         }
 
@@ -232,8 +232,8 @@ function LabtestCheckout() {
           onSuccess: (data) => {
             localStorage.removeItem("labtest_cart");
 
-            toast.success(
-              `${data?.message || "Order successfully booked and payment verified"}`
+            alert(
+              `${data?.message || "Payment successful and order successfully booked"}`
             );
 
             const orderId = res.data?.id;
@@ -249,7 +249,7 @@ function LabtestCheckout() {
       }
 
       localStorage.removeItem("labtest_cart");
-      toast.success(res.data?.message || "Order successfully booked");
+      alert(res.data?.message || "Order successfully booked");
 
       const orderId = res.data?.id;
       if (orderId) {
@@ -260,12 +260,12 @@ function LabtestCheckout() {
     } catch (error) {
       console.error("Lab order create error:", error.response?.data || error.message);
 
-      toast.error(
+      alert(
         error.response?.data?.detail ||
           error.response?.data?.error ||
           error.response?.data?.items?.[0] ||
           error.response?.data?.doctor?.[0] ||
-          "Order placement failed. Please check your details and try again."
+          "Booking nahi hui"
       );
     } finally {
       setLoading(false);
