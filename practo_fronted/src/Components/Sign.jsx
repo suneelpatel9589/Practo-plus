@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-
 import {
   Mail,
   Phone,
@@ -10,6 +9,8 @@ import {
   User,
   ShieldCheck,
   Stethoscope,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 function Sign() {
@@ -17,6 +18,8 @@ function Sign() {
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [form, setForm] = useState({
     first_name: "",
@@ -25,6 +28,7 @@ function Sign() {
     phone: "",
     role: "PATIENT",
     password: "",
+    confirm_password: "",
     otp: "",
   });
 
@@ -40,9 +44,15 @@ function Sign() {
       !form.email ||
       !form.phone ||
       !form.role ||
-      !form.password
+      !form.password ||
+      !form.confirm_password
     ) {
       toast.error("Please fill all fields");
+      return;
+    }
+
+    if (form.password !== form.confirm_password) {
+      toast.error("Passwords do not match");
       return;
     }
 
@@ -85,7 +95,7 @@ function Sign() {
         otp: form.otp,
       });
 
-      toast.success(res.data.message || "OTP verified successfully");
+      toast.success(res.data.message || "Signup successful");
 
       localStorage.setItem("access", res.data.access);
       localStorage.setItem("token", res.data.access);
@@ -130,7 +140,7 @@ function Sign() {
         password: form.password,
       });
 
-      toast.success(res.data.message || "OTP resent");
+      toast.success(res.data.message || "OTP resent successfully");
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
@@ -169,8 +179,7 @@ function Sign() {
               <div>
                 <h3 className="text-lg font-semibold">Fast & Secure Signup</h3>
                 <p className="text-sm text-sky-50/85">
-                otp verification ensures your account's security and a smooth registration process.
-                  
+                  OTP verification ensures your account security.
                 </p>
               </div>
             </div>
@@ -220,9 +229,7 @@ function Sign() {
 
             <div
               className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition ${
-                step === 2
-                  ? "bg-emerald-600 text-white"
-                  : "bg-slate-200 text-slate-500"
+                step === 2 ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-500"
               }`}
             >
               2
@@ -286,14 +293,24 @@ function Sign() {
                 </select>
               </div>
 
-              <InputBox
+              <PasswordBox
                 label="Create Password"
-                icon={<LockKeyhole size={18} />}
-                type="password"
                 name="password"
                 value={form.password}
                 onChange={handleChange}
                 placeholder="Create password"
+                show={showPassword}
+                setShow={setShowPassword}
+              />
+
+              <PasswordBox
+                label="Confirm Password"
+                name="confirm_password"
+                value={form.confirm_password}
+                onChange={handleChange}
+                placeholder="Confirm password"
+                show={showConfirmPassword}
+                setShow={setShowConfirmPassword}
               />
 
               <div className="rounded-2xl bg-sky-50 px-4 py-3 text-sm text-sky-700 ring-1 ring-sky-100">
@@ -390,6 +407,45 @@ function InputBox({
           maxLength={maxLength}
           className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
         />
+      </div>
+    </div>
+  );
+}
+
+function PasswordBox({
+  label,
+  name,
+  value,
+  onChange,
+  placeholder,
+  show,
+  setShow,
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-slate-600">
+        {label}
+      </label>
+
+      <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 transition-all duration-200 focus-within:border-sky-500 focus-within:bg-white focus-within:ring-4 focus-within:ring-sky-100">
+        <LockKeyhole size={18} className="text-slate-400" />
+
+        <input
+          type={show ? "text" : "password"}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
+        />
+
+        <button
+          type="button"
+          onClick={() => setShow((prev) => !prev)}
+          className="text-slate-400 transition hover:text-slate-700"
+        >
+          {show ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
       </div>
     </div>
   );

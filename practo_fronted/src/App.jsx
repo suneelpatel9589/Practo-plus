@@ -36,6 +36,7 @@ import HealthRecord from "./Components/HealthRecord";
 import AdminAppointments from './Components/AdminAppointments';
 import AdminLabBookings from "./Components/AdminLabBookings";
 import AdminPayments from "./Components/AdminPayments";
+import ForgotPassword from "./Components/ForgotPassword";
 
 
 function App() {
@@ -76,6 +77,7 @@ function App() {
         <Route path="/admin-appointments" element={<AdminAppointments />} />
         <Route path="/admin-lab-bookings" element={<AdminLabBookings />} />
         <Route path="/payments" element={<AdminPayments />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
 
       <Footer />

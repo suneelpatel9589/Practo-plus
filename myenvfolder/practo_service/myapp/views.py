@@ -934,3 +934,78 @@ def verify_otp(request):
             "role": user.role,
         },
     }, status=200)
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def forgot_password(request):
+    email = request.data.get("email")
+
+    if not email:
+        return Response({"error": "Email is required"}, status=400)
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({"error": "Email not registered"}, status=400)
+
+    otp_code = generate_otp()
+
+    OTP.objects.filter(email=email, is_verified=False).delete()
+
+    OTP.objects.create(
+        user=user,
+        email=email,
+        otp_code=otp_code,
+        password="",
+        is_verified=False,
+    )
+
+    send_mail(
+        subject="Practo Service - Password Reset OTP",
+        message=f"Hello {user.first_name or 'User'},\n\nYour password reset OTP is {otp_code}\nValid for 5 minutes.",
+        from_email="Practo Service <suneelpatel9589@gmail.com>",
+        recipient_list=[email],
+        fail_silently=False,
+    )
+
+    return Response({"message": "Password reset OTP sent successfully"}, status=200)
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def reset_password(request):
+    email = request.data.get("email")
+    otp_code = request.data.get("otp")
+    password = request.data.get("password")
+    confirm_password = request.data.get("confirm_password")
+
+    if not email or not otp_code or not password or not confirm_password:
+        return Response({"error": "All fields are required"}, status=400)
+
+    if password != confirm_password:
+        return Response({"error": "Passwords do not match"}, status=400)
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=400)
+
+    otp = OTP.objects.filter(
+        email=email,
+        otp_code=otp_code,
+        is_verified=False
+    ).last()
+
+    if not otp:
+        return Response({"error": "Invalid OTP"}, status=400)
+
+    if otp.created_at < timezone.now() - timedelta(minutes=5):
+        return Response({"error": "OTP expired"}, status=400)
+
+    user.set_password(password)
+    user.save()
+
+    otp.is_verified = True
+    otp.user = user
+    otp.save()
+
+    return Response({"message": "Password reset successfully"}, status=200)

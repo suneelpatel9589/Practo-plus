@@ -16,6 +16,8 @@ from .views import (
     login_user,
     send_otp,
     verify_otp,
+    forgot_password,
+    reset_password
 )
 
 router = DefaultRouter()
@@ -33,6 +35,8 @@ urlpatterns = [
     path("send-otp/", send_otp, name="send-otp"),
     path("verify-otp/", verify_otp, name="verify-otp"),
     path("admin-dashboard/", AdminDashboardView.as_view(), name="admin-dashboard"),
+    path("forgot-password/", forgot_password, name="forgot-password"),
+    path("reset-password/", reset_password, name="reset-password"),
 
     path("payment-gateway/create-order/", CreateRazorpayOrderView.as_view(), name="payment-create-order"),
     path("payment-gateway/verify/", VerifyRazorpayPaymentView.as_view(), name="payment-verify"),
