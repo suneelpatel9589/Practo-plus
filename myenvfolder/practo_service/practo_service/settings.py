@@ -3,17 +3,17 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 
-# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env
 load_dotenv(BASE_DIR / ".env")
 
 # SECURITY
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = True
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
 ALLOWED_HOSTS = [
-    'localhost',
+    "localhost",
     "127.0.0.1",
     "practo-plus.onrender.com",
 ]
@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'drf_yasg',
 ]
 
-# DRF config
+# DRF
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
@@ -50,6 +50,8 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -86,6 +88,10 @@ DATABASES = {
         'PASSWORD': os.getenv("DB_PASSWORD"),
         'HOST': os.getenv("DB_HOST"),
         'PORT': os.getenv("DB_PORT"),
+
+        'OPTIONS': {
+            'ssl': {'ssl-mode': 'REQUIRED'},
+        },
     }
 }
 
@@ -100,20 +106,25 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
+
 USE_I18N = True
 USE_TZ = True
 
 # Static files
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# WhiteNoise
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Custom user
+# Custom User
 AUTH_USER_MODEL = 'myapp.User'
 
 # JWT
@@ -126,11 +137,12 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
 EMAIL_HOST_USER = os.getenv("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
+
 DEFAULT_FROM_EMAIL = os.getenv("EMAIL_USER")
 
 # Razorpay
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
-
