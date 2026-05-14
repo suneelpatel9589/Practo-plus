@@ -868,13 +868,22 @@ def send_otp(request):
         role=str(role).upper(),
         password=password,
     )
-
     send_mail(
-        subject="Practo Service - OTP Verification Code",
-        message=f"Hello {first_name or 'User'},\n\nYour OTP is {otp_code}\nValid for 5 minutes.",
-        from_email="Practo Service <suneelpatel9589@gmail.com>",
-        recipient_list=[email],
-        fail_silently=False,
+    subject="Practo Plus - OTP Verification Code",
+    message=f"""
+    Hello {first_name or 'User'},
+    Welcome to Practo Plus Healthcare Platform.
+    Your OTP verification code is:
+    {otp_code}
+    This OTP is valid for 5 minutes.
+    Please do not share this OTP with anyone for security reasons.
+    If you did not request this verification, please ignore this email.
+    Regards,
+    Practo Plus Healthcare Team
+    """,
+    from_email="Practo Plus <suneelpatel9589@gmail.com>",
+    recipient_list=[email],
+    fail_silently=False,
     )
 
     return Response({"message": "OTP sent successfully"}, status=200)
@@ -961,12 +970,21 @@ def forgot_password(request):
     )
 
     send_mail(
-        subject="Practo Service - Password Reset OTP",
-        message=f"Hello {user.first_name or 'User'},\n\nYour password reset OTP is {otp_code}\nValid for 5 minutes.",
-        from_email="Practo Service <suneelpatel9589@gmail.com>",
-        recipient_list=[email],
-        fail_silently=False,
-    )
+    subject="Practo Plus - Password Reset Verification Code",
+    message=f"""
+    Hello {user.first_name or 'User'},
+    We received a request to reset your password for your Practo Plus account.
+    Your One-Time Password (OTP) is:
+    {otp_code}
+    This OTP is valid for 5 minutes.
+    If you did not request a password reset, please ignore this email.
+    Regards,
+    Practo Plus Healthcare Team
+    """,
+    from_email="Practo Plus <suneelpatel9589@gmail.com>",
+    recipient_list=[email],
+    fail_silently=False,
+)
 
     return Response({"message": "Password reset OTP sent successfully"}, status=200)
 
