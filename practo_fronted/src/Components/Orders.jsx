@@ -38,7 +38,7 @@ function Orders() {
       if (orders.length === 0) setLoading(true);
       else setRefreshing(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/orders/", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/orders/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -53,14 +53,14 @@ function Orders() {
   }
 
   async function updateOrderStatus(id, status) {
-    const ok = window.confirm(`Order ${formatStatus(status)} karna hai?`);
+    const ok = window.confirm(`Are you sure you want to update the order status to ${formatStatus(status)}?`);
     if (!ok) return;
 
     try {
       setStatusLoading(`${id}-${status}`);
 
       const res = await axios.patch(
-        `http://127.0.0.1:8000/orders/${id}/update-status/`,
+        `${import.meta.env.VITE_API_URL}/orders/${id}/update-status/`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );

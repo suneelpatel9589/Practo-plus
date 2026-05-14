@@ -25,7 +25,7 @@ function DoctorAppointments() {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/appointments/", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/appointments/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -72,7 +72,7 @@ function DoctorAppointments() {
       setActionLoading((prev) => ({ ...prev, [id]: actionType }));
 
       const res = await axios.patch(
-        `http://127.0.0.1:8000/appointments/${id}/${endpointMap[actionType]}/`,
+        `${import.meta.env.VITE_API_URL}/appointments/${id}/${endpointMap[actionType]}/`,
         {},
         {
           headers: {

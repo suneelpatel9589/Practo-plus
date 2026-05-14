@@ -41,7 +41,7 @@ function AdminUsers() {
       if (users.length === 0) setLoading(true);
       else setRefreshing(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/admin-users/", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin-users/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -73,7 +73,7 @@ function AdminUsers() {
       setSavingId(userId);
 
       const res = await axios.patch(
-        `http://127.0.0.1:8000/admin-users/${userId}/`,
+        `${import.meta.env.VITE_API_URL}/admin-users/${userId}/`,
         { role: newRole },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -99,7 +99,7 @@ function AdminUsers() {
     try {
       setDeletingId(userId);
 
-      await axios.delete(`http://127.0.0.1:8000/admin-users/${userId}/`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/admin-users/${userId}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

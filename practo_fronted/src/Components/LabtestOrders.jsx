@@ -45,7 +45,7 @@ function LabtestOrders() {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/lab-orders/", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/lab-orders/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -70,7 +70,7 @@ function LabtestOrders() {
       setStatusLoading(`${id}-${status}`);
 
       const res = await axios.patch(
-        `http://127.0.0.1:8000/lab-orders/${id}/update-status/`,
+        `${import.meta.env.VITE_API_URL}/lab-orders/${id}/update-status/`,
         { status },
         {
           headers: {

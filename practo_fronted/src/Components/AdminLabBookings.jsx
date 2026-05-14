@@ -35,7 +35,7 @@ function AdminLabBookings() {
     try {
       bookings.length === 0 ? setLoading(true) : setRefreshing(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/lab-orders/", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/lab-orders/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -67,7 +67,7 @@ function AdminLabBookings() {
       setUpdatingId(id);
 
       const res = await axios.patch(
-        `http://127.0.0.1:8000/lab-orders/${id}/update-status/`,
+        `${import.meta.env.VITE_API_URL}/lab-orders/${id}/update-status/`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );

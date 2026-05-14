@@ -16,7 +16,7 @@ function Checkout() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
   const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
   const cart = JSON.parse(localStorage.getItem("medicine_cart") || "[]");
-  const API_BASE = "http://127.0.0.1:8000";
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({

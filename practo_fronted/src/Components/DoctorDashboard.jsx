@@ -57,9 +57,9 @@ function DoctorDashboard() {
   async function fetchDashboardData() {
     try {
       const [doctorRes, appointmentRes, labBookingRes] = await Promise.all([
-        axios.get("http://127.0.0.1:8000/doctors/"),
-        axios.get("http://127.0.0.1:8000/appointments/", authConfig),
-        axios.get("http://127.0.0.1:8000/lab-orders/", authConfig),
+        axios.get(`${import.meta.env.VITE_API_URL}/doctors/`, authConfig),
+        axios.get(`${import.meta.env.VITE_API_URL}/appointments/`, authConfig),
+        axios.get(`${import.meta.env.VITE_API_URL}/lab-orders/`, authConfig),
       ]);
 
       const myDoctor = (doctorRes.data || []).find(
@@ -177,7 +177,7 @@ function DoctorDashboard() {
       setActionLoading((prev) => ({ ...prev, [id]: actionType }));
 
       const res = await axios.patch(
-        `http://127.0.0.1:8000/appointments/${id}/${actionMap[actionType]}/`,
+        `${import.meta.env.VITE_API_URL}/appointments/${id}/${actionMap[actionType]}/`,
         {},
         authConfig
       );
@@ -206,7 +206,7 @@ function DoctorDashboard() {
       setLabActionLoading((prev) => ({ ...prev, [id]: newStatus }));
 
       const res = await axios.patch(
-        `http://127.0.0.1:8000/lab-orders/${id}/update-status/`,
+        `${import.meta.env.VITE_API_URL}/lab-orders/${id}/update-status/`,
         { status: newStatus },
         authConfig
       );
@@ -335,7 +335,7 @@ function DoctorDashboard() {
                       src={
                         doctor.image.startsWith("http")
                           ? doctor.image
-                          : `http://127.0.0.1:8000/media/${doctor.image}`
+                          : `${import.meta.env.VITE_API_URL}${doctor.image}`
                       }
                       alt={doctor.doctor_name}
                       className="h-full w-full object-cover"

@@ -40,7 +40,7 @@ function AdminOrders() {
       setError("");
       orders.length === 0 ? setLoading(true) : setRefreshing(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/orders/", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/orders/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -73,7 +73,7 @@ function AdminOrders() {
       setUpdatingId(orderId);
 
       await axios.patch(
-        `http://127.0.0.1:8000/orders/${orderId}/update-status/`,
+        `${import.meta.env.VITE_API_URL}/orders/${orderId}/update-status/`,
         { status: nextStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

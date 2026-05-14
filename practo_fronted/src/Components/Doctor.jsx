@@ -29,7 +29,7 @@ export default function DoctorPage() {
     try {
       setLoadingDoctors(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/doctors/");
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/doctors/`);
 
       const mappedDoctors = res.data.map((item) => ({
         id: item.id,
@@ -212,7 +212,7 @@ export default function DoctorPage() {
                         src={
                           doc.image.startsWith("http")
                             ? doc.image
-                            : `http://127.0.0.1:8000/media/${doc.image}`
+                            : `${import.meta.env.VITE_API_URL}${doc.image}`
                         }
                         alt={doc.name}
                         className="h-full w-full object-cover transition duration-300 group-hover:scale-105"

@@ -19,7 +19,7 @@ function LabtestCheckout() {
   const cart = JSON.parse(localStorage.getItem("labtest_cart") || "[]");
 
   const COMMISSION_RATE = 0.08;
-  const API_BASE = "http://127.0.0.1:8000";
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const [loading, setLoading] = useState(false);
   const [doctors, setDoctors] = useState([]);

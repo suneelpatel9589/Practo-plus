@@ -32,10 +32,12 @@ function AdminAppointments() {
     try {
       appointments.length === 0 ? setLoading(true) : setRefreshing(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/appointments/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/appointments/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setAppointments(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to fetch appointments");
@@ -50,7 +52,7 @@ function AdminAppointments() {
       setUpdatingId(`${id}-${action}`);
 
       const res = await axios.patch(
-        `http://127.0.0.1:8000/appointments/${id}/${action}/`,
+        `${import.meta.env.VITE_API_URL}/appointments/${id}/${action}/`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

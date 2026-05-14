@@ -13,7 +13,7 @@ import {
 
 function HealthRecord() {
   const token = localStorage.getItem("access") || localStorage.getItem("token");
-  const API_BASE = "http://127.0.0.1:8000";
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("appointments");

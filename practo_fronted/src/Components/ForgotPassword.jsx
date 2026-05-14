@@ -52,7 +52,7 @@ function ForgotPassword() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://127.0.0.1:8000/forgot-password/", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot-password/`, {
         email: form.email,
       });
 
@@ -81,7 +81,7 @@ function ForgotPassword() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://127.0.0.1:8000/forgot-password/", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot-password/`, {
         email: form.email,
       });
 
@@ -112,7 +112,7 @@ function ForgotPassword() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://127.0.0.1:8000/reset-password/", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/reset-password/`, {
         email: form.email,
         otp: form.otp,
         password: form.password,

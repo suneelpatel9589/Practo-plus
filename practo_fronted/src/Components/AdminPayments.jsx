@@ -32,7 +32,7 @@ function AdminPayments() {
     try {
       payments.length === 0 ? setLoading(true) : setRefreshing(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/payments/", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/payments/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

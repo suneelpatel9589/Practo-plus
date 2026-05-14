@@ -25,7 +25,7 @@ function MyAppointmentReceipt() {
 
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/appointments/${id}/`,
+        `${import.meta.env.VITE_API_URL}/appointments/${id}/receipt/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -70,7 +70,7 @@ function MyAppointmentReceipt() {
           </h1>
 
           <button
-            onClick={() => navigate("/appointments")}
+            onClick={() => navigate("/my-appointments")}
             className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm shadow hover:bg-slate-100"
           >
             <ArrowLeft size={16} />

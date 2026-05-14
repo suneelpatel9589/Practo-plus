@@ -36,7 +36,7 @@ function MyAppointments() {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://127.0.0.1:8000/appointments/", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/appointments/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -52,14 +52,14 @@ function MyAppointments() {
   }
 
   async function cancelAppointment(id) {
-    const ok = window.confirm("Kya aap appointment cancel karna chahte ho?");
+    const ok = window.confirm("Are you sure you want to cancel this appointment?");
     if (!ok) return;
 
     try {
       setCancelLoading(id);
 
       const res = await axios.patch(
-        `http://127.0.0.1:8000/appointments/${id}/cancel/`,
+        `${import.meta.env.VITE_API_URL}/appointments/${id}/cancel/`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

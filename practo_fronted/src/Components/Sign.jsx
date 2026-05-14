@@ -59,7 +59,7 @@ function Sign() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://127.0.0.1:8000/send-otp/", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/send-otp/`, {
         first_name: form.first_name,
         last_name: form.last_name,
         email: form.email,
@@ -90,7 +90,7 @@ function Sign() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://127.0.0.1:8000/verify-otp/", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/verify-otp/`, {
         email: form.email,
         otp: form.otp,
       });
@@ -131,7 +131,7 @@ function Sign() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://127.0.0.1:8000/send-otp/", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/send-otp/`, {
         first_name: form.first_name,
         last_name: form.last_name,
         email: form.email,

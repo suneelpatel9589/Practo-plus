@@ -120,13 +120,16 @@ function AddDoctor() {
         data.append("image", formData.image);
       }
 
-      const response = await axios.post("http://127.0.0.1:8000/doctors/", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/doctors/`,
+          data,
+          {
+             headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+         }
+      );
       toast.success(response.data?.message || "Doctor added successfully ", {
         autoClose: 2000,
       });

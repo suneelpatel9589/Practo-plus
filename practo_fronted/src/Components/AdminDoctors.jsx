@@ -27,7 +27,9 @@ function AdminDoctors() {
       setLoading(true);
       setError("");
 
-      const res = await axios.get("http://127.0.0.1:8000/doctors/");
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/doctors/`
+      );
       setDoctors(res.data);
     } catch (err) {
       setError("Failed to fetch doctors");
@@ -40,7 +42,7 @@ function AdminDoctors() {
     try {
       setActionLoading(`approve-${id}`);
       await axios.patch(
-        `http://127.0.0.1:8000/doctors/${id}/approve/`,
+        `${import.meta.env.VITE_API_URL}/doctors/${id}/approve/`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -58,7 +60,7 @@ function AdminDoctors() {
     try {
       setActionLoading(`reject-${id}`);
       await axios.patch(
-        `http://127.0.0.1:8000/doctors/${id}/reject/`,
+        `${import.meta.env.VITE_API_URL}/doctors/${id}/reject/`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

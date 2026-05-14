@@ -69,7 +69,7 @@ function EditDoctor() {
   useEffect(() => {
     async function fetchDoctor() {
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/doctors/${id}/`, {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/doctors/${id}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -114,7 +114,7 @@ function EditDoctor() {
         data.append("image", formData.image);
       }
 
-      await axios.put(`http://127.0.0.1:8000/doctors/${id}/`, data, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/doctors/${id}/`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -197,7 +197,7 @@ function EditDoctor() {
                             preview ||
                             (oldImage?.startsWith("http")
                               ? oldImage
-                              : `http://127.0.0.1:8000/media/${oldImage}`)
+                              : `${import.meta.env.VITE_API_URL}/media/${oldImage}`)
                           }
                           alt="Doctor"
                           className="h-full w-full object-cover"

@@ -35,7 +35,7 @@ function LabtestReceipt() {
     try {
       setLoading(true);
 
-      const res = await axios.get(`http://127.0.0.1:8000/lab-orders/${id}/`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/lab-orders/${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
