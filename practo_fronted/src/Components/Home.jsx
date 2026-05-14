@@ -18,42 +18,42 @@ function Home() {
     {
       title: "Dentist",
       desc: "Teething troubles? Schedule a dental checkup",
-      img: "public/Deni.jpg",
+      img: "/Deni.jpg",
     },
     {
       title: "Gynecologist",
       desc: "Women's health & pregnancy consultation",
-      img: "public/gyn.jpg",
+      img: "/gyn.jpg",
     },
     {
       title: "Dietitian",
       desc: "Healthy eating & weight management",
-      img: "public/dio.jpg",
+      img: "/dio.jpg",
     },
     {
       title: "Physiotherapist",
       desc: "Pain relief & therapy",
-      img: "public/phy.jpg",
+      img: "/phy.jpg",
     },
     {
       title: "Cardiologist",
       desc: "Heart specialist consultation",
-      img: "public/car.jpg",
+      img: "/car.jpg",
     },
     {
       title: "Dermatologist",
       desc: "Skin & hair treatments",
-      img: "public/der.jpg",
+      img: "/der.jpg",
     },
     {
       title: "Neurologist",
       desc: "Brain & nervous system care",
-      img: "public/neu.avif",
+      img: "/neu.avif",
     },
     {
       title: "Orthopedic",
       desc: "Bone & joint specialist",
-      img: "public/opt.jpg",
+      img: "/opt.jpg",
     },
   ];
 
