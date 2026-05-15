@@ -335,7 +335,7 @@ function DoctorDashboard() {
                       src={
                         doctor.image.startsWith("http")
                           ? doctor.image
-                          : `${import.meta.env.VITE_API_URL}${doctor.image}`
+                          : `${import.meta.env.VITE_BACKEND_URL}${doctor.image}`
                       }
                       alt={doctor.doctor_name}
                       className="h-full w-full object-cover"
