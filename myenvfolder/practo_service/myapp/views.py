@@ -856,7 +856,6 @@ def send_otp(request):
 
     otp_code = generate_otp()
 
-    # पुराना pending OTP delete कर दो
     OTP.objects.filter(email=email, is_verified=False).delete()
 
     OTP.objects.create(
@@ -868,23 +867,17 @@ def send_otp(request):
         role=str(role).upper(),
         password=password,
     )
-    send_mail(
-    subject="Practo Plus - OTP Verification Code",
-    message=f"""
-    Hello {first_name or 'User'},
-    Welcome to Practo Plus Healthcare Platform.
-    Your OTP verification code is:
-    {otp_code}
-    This OTP is valid for 5 minutes.
-    Please do not share this OTP with anyone for security reasons.
-    If you did not request this verification, please ignore this email.
-    Regards,
-    Practo Plus Healthcare Team
-    """,
-    from_email=settings.DEFAULT_FROM_EMAIL,
-    recipient_list=[email],
-    fail_silently=False,
-    )
+
+    try:
+        send_mail(
+            subject="Practo Plus - OTP Verification Code",
+            message=f"Your OTP verification code is: {otp_code}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+    except Exception as e:
+        return Response({"error": "OTP email send failed", "details": str(e)}, status=500)
 
     return Response({"message": "OTP sent successfully"}, status=200)
 @api_view(["POST"])
@@ -943,7 +936,6 @@ def verify_otp(request):
             "role": user.role,
         },
     }, status=200)
-
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def forgot_password(request):
@@ -969,22 +961,16 @@ def forgot_password(request):
         is_verified=False,
     )
 
-    send_mail(
-    subject="Practo Plus - Password Reset Verification Code",
-    message=f"""
-    Hello {user.first_name or 'User'},
-    We received a request to reset your password for your Practo Plus account.
-    Your One-Time Password (OTP) is:
-    {otp_code}
-    This OTP is valid for 5 minutes.
-    If you did not request a password reset, please ignore this email.
-    Regards,
-    Practo Plus Healthcare Team
-    """,
-    from_email=settings.DEFAULT_FROM_EMAIL,
-    recipient_list=[email],
-    fail_silently=False,
-)
+    try:
+        send_mail(
+            subject="Practo Plus - Password Reset Verification Code",
+            message=f"Your password reset OTP is: {otp_code}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+    except Exception as e:
+        return Response({"error": "Password reset OTP email failed", "details": str(e)}, status=500)
 
     return Response({"message": "Password reset OTP sent successfully"}, status=200)
 
