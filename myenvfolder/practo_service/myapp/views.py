@@ -881,7 +881,7 @@ def send_otp(request):
     Regards,
     Practo Plus Healthcare Team
     """,
-    from_email="Practo Plus <suneelpatel9589@gmail.com>",
+    from_email=settings.DEFAULT_FROM_EMAIL,
     recipient_list=[email],
     fail_silently=False,
     )
@@ -981,7 +981,7 @@ def forgot_password(request):
     Regards,
     Practo Plus Healthcare Team
     """,
-    from_email="Practo Plus <suneelpatel9589@gmail.com>",
+    from_email=settings.DEFAULT_FROM_EMAIL,
     recipient_list=[email],
     fail_silently=False,
 )
