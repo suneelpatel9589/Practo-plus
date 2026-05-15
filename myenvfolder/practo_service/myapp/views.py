@@ -812,37 +812,43 @@ def generate_otp():
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def send_otp(request):
-    first_name = request.data.get("first_name", "")
-    last_name = request.data.get("last_name", "")
-    email = request.data.get("email")
-    phone = request.data.get("phone")
-    role = request.data.get("role", "PATIENT")
-    password = request.data.get("password")
-
-    if not email or not password:
-        return Response({"error": "Email and password are required"}, status=400)
-
-    if str(role).upper() == "ADMIN":
-        return Response({"error": "Admin signup not allowed"}, status=403)
-
-    if User.objects.filter(email=email).exists():
-        return Response({"error": "Email already registered"}, status=400)
-
-    otp_code = generate_otp()
-
-    OTP.objects.filter(email=email, is_verified=False).delete()
-
-    OTP.objects.create(
-        email=email,
-        otp_code=otp_code,
-        first_name=first_name,
-        last_name=last_name,
-        phone=phone,
-        role=str(role).upper(),
-        password=password,
-    )
-
     try:
+        print("REQUEST RECEIVED")
+        print("DATA:", request.data)
+
+        first_name = request.data.get("first_name", "")
+        last_name = request.data.get("last_name", "")
+        email = request.data.get("email")
+        phone = request.data.get("phone", "")
+        role = request.data.get("role", "PATIENT")
+        password = request.data.get("password")
+
+        if not email or not password:
+            return Response({"error": "Email and password are required"}, status=400)
+
+        if User.objects.filter(email=email).exists():
+            return Response({"error": "Email already registered"}, status=400)
+
+        otp_code = generate_otp()
+
+        print("BEFORE OTP DB SAVE")
+
+        OTP.objects.filter(email=email, is_verified=False).delete()
+
+        OTP.objects.create(
+            email=email,
+            otp_code=otp_code,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
+            role=str(role).upper(),
+            password=password,
+        )
+
+        print("AFTER OTP DB SAVE")
+        print("EMAIL_USER:", settings.EMAIL_HOST_USER)
+        print("EMAIL_PASSWORD_EXISTS:", bool(settings.EMAIL_HOST_PASSWORD))
+
         send_mail(
             "Practo Plus - OTP Verification Code",
             f"Your OTP verification code is: {otp_code}",
@@ -850,66 +856,14 @@ def send_otp(request):
             [email],
             fail_silently=False,
         )
+
+        print("EMAIL SENT")
+
+        return Response({"message": "OTP sent successfully"}, status=200)
+
     except Exception as e:
+        print("SEND OTP ERROR:", str(e))
         return Response({"error": str(e)}, status=500)
-
-    return Response({"message": "OTP sent successfully"}, status=200)
-@api_view(["POST"])
-@permission_classes([AllowAny])
-def verify_otp(request):
-    email = request.data.get("email")
-    otp_code = request.data.get("otp")
-
-    if not email or not otp_code:
-        return Response({"error": "Email and OTP are required"}, status=400)
-
-    otp = OTP.objects.filter(
-        email=email,
-        otp_code=otp_code,
-        is_verified=False
-    ).last()
-
-    if not otp:
-        return Response({"error": "Invalid OTP"}, status=400)
-
-    if otp.created_at < timezone.now() - timedelta(minutes=5):
-        return Response({"error": "OTP expired"}, status=400)
-
-    if User.objects.filter(email=email).exists():
-        return Response({"error": "Email already registered"}, status=400)
-
-    username = email.split("@")[0]
-
-    user = User.objects.create(
-        email=email,
-        username=username,
-        first_name=otp.first_name,
-        last_name=otp.last_name,
-        phone=otp.phone,
-        role=otp.role,
-    )
-    user.set_password(otp.password)
-    user.save()
-
-    otp.is_verified = True
-    otp.user = user
-    otp.save()
-
-    refresh = RefreshToken.for_user(user)
-
-    return Response({
-        "message": "User registered successfully",
-        "access": str(refresh.access_token),
-        "refresh": str(refresh),
-        "user": {
-            "id": user.id,
-            "email": user.email,
-            "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "role": user.role,
-        },
-    }, status=200)
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def forgot_password(request):
