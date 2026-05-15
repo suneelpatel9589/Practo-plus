@@ -811,32 +811,6 @@ def generate_otp():
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
-def login_user(request):
-    serializer = LoginSerializer(data=request.data)
-
-    if serializer.is_valid():
-        user = serializer.validated_data["user"]
-        refresh = RefreshToken.for_user(user)
-
-        return Response({
-            "message": "Login successful",
-            "access": str(refresh.access_token),
-            "refresh": str(refresh),
-            "user": {
-                "id": user.id,
-                "email": user.email,
-                "username": user.username,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "role": user.role,
-            },
-        }, status=200)
-
-    return Response(serializer.errors, status=400)
-
-
-@api_view(["POST"])
-@permission_classes([AllowAny])
 def send_otp(request):
     first_name = request.data.get("first_name", "")
     last_name = request.data.get("last_name", "")
@@ -868,13 +842,16 @@ def send_otp(request):
         password=password,
     )
 
-    send_mail(
-        "Practo Plus - OTP Verification Code",
-        f"Your OTP verification code is: {otp_code}",
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False,
-    )
+    try:
+        send_mail(
+            "Practo Plus - OTP Verification Code",
+            f"Your OTP verification code is: {otp_code}",
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
     return Response({"message": "OTP sent successfully"}, status=200)
 @api_view(["POST"])
