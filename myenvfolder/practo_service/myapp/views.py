@@ -815,6 +815,10 @@ def send_otp(request):
     try:
         email = request.data.get("email")
         password = request.data.get("password")
+        first_name = request.data.get("first_name", "")
+        last_name = request.data.get("last_name", "")
+        phone = request.data.get("phone", "")
+        role = request.data.get("role", "PATIENT")
 
         if not email or not password:
             return Response({"error": "Email and password required"}, status=400)
@@ -827,6 +831,10 @@ def send_otp(request):
             email=email,
             otp_code=otp_code,
             password=password,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
+            role=role,
         )
 
         response = requests.post(
@@ -850,9 +858,7 @@ def send_otp(request):
         return Response({"message": "OTP sent successfully"}, status=200)
 
     except Exception as e:
-        return Response({
-            "error": str(e)
-        }, status=500)
+        return Response({"error": str(e)}, status=500)
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def verify_otp(request):
@@ -862,7 +868,11 @@ def verify_otp(request):
     if not email or not otp_code:
         return Response({"error": "Email and OTP are required"}, status=400)
 
-    otp = OTP.objects.filter(email=email, otp_code=otp_code, is_verified=False).last()
+    otp = OTP.objects.filter(
+        email=email,
+        otp_code=otp_code,
+        is_verified=False
+    ).last()
 
     if not otp:
         return Response({"error": "Invalid OTP"}, status=400)
@@ -881,8 +891,9 @@ def verify_otp(request):
         first_name=otp.first_name,
         last_name=otp.last_name,
         phone=otp.phone,
-        role=otp.role,
+        role=otp.role or "PATIENT",
     )
+
     user.set_password(otp.password)
     user.save()
 
@@ -904,8 +915,7 @@ def verify_otp(request):
             "last_name": user.last_name,
             "role": user.role,
         },
-    }, status=200)   
-
+    }, status=200)
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
