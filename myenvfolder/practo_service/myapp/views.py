@@ -868,16 +868,13 @@ def send_otp(request):
         password=password,
     )
 
-    try:
-        send_mail(
-            subject="Practo Plus - OTP Verification Code",
-            message=f"Your OTP verification code is: {otp_code}",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
-        )
-    except Exception as e:
-        return Response({"error": "OTP email send failed", "details": str(e)}, status=500)
+    send_mail(
+        "Practo Plus - OTP Verification Code",
+        f"Your OTP verification code is: {otp_code}",
+        settings.DEFAULT_FROM_EMAIL,
+        [email],
+        fail_silently=True,
+    )
 
     return Response({"message": "OTP sent successfully"}, status=200)
 @api_view(["POST"])
@@ -961,16 +958,13 @@ def forgot_password(request):
         is_verified=False,
     )
 
-    try:
-        send_mail(
-            subject="Practo Plus - Password Reset Verification Code",
-            message=f"Your password reset OTP is: {otp_code}",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
-        )
-    except Exception as e:
-        return Response({"error": "Password reset OTP email failed", "details": str(e)}, status=500)
+    send_mail(
+        "Practo Plus - Password Reset Verification Code",
+        f"Your password reset OTP is: {otp_code}",
+        settings.DEFAULT_FROM_EMAIL,
+        [email],
+        fail_silently=True,
+    )
 
     return Response({"message": "Password reset OTP sent successfully"}, status=200)
 

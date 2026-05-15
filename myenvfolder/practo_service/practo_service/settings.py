@@ -147,6 +147,7 @@ SIMPLE_JWT = {
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -156,6 +157,8 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
+
+EMAIL_TIMEOUT = 5
 
 # Razorpay
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
