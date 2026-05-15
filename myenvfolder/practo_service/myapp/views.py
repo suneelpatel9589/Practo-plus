@@ -4,7 +4,7 @@ import hmac
 import hashlib
 from datetime import timedelta
 from .models import Order, OrderItem, Payment
-
+import requests
 import razorpay
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -829,13 +829,23 @@ def send_otp(request):
             password=password,
         )
 
-        send_mail(
-            "Practo Plus OTP",
-            f"Your OTP is {otp_code}",
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=False,
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": settings.DEFAULT_FROM_EMAIL,
+                "to": [email],
+                "subject": "Practo Plus OTP",
+                "html": f"<p>Your OTP is <b>{otp_code}</b></p>",
+            },
+            timeout=20,
         )
+
+        if response.status_code >= 400:
+            return Response({"error": response.text}, status=500)
 
         return Response({"message": "OTP sent successfully"}, status=200)
 
@@ -946,15 +956,26 @@ def forgot_password(request):
         is_verified=False,
     )
 
-    send_mail(
-        "Practo Plus - Password Reset Verification Code",
-        f"Your password reset OTP is: {otp_code}",
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False,
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "from": settings.DEFAULT_FROM_EMAIL,
+            "to": [email],
+            "subject": "Practo Plus Password Reset OTP",
+            "html": f"<p>Your password reset OTP is <b>{otp_code}</b></p>",
+        },
+        timeout=20,
     )
 
+    if response.status_code >= 400:
+        return Response({"error": response.text}, status=500)
+
     return Response({"message": "Password reset OTP sent successfully"}, status=200)
+
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
