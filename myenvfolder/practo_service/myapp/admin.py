@@ -19,4 +19,3 @@ admin.site.register(Payment)
 
 
 # Register your models here.
-
