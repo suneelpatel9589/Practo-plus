@@ -330,20 +330,16 @@ function DoctorDashboard() {
             <div className="self-start rounded-[28px] border border-slate-100 bg-slate-50/70 p-6 shadow-sm xl:sticky xl:top-6">
               <div className="flex flex-col items-center text-center">
                 <div className="h-32 w-32 overflow-hidden rounded-full bg-white shadow-md ring-4 ring-white">
-                  {doctor.image ? (
+                  {doctor.image_url ? (
                     <img
-                      src={
-                        doctor.image.startsWith("http")
-                          ? doctor.image
-                          : `${import.meta.env.VITE_API_URL}${doctor.image}`
-                      }
+                      src={doctor.image_url}
                       alt={doctor.doctor_name}
                       className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-slate-400">
-                      <UserRound size={48} />
-                    </div>
+                      />
+                     ) : (
+                      <div className="flex h-full w-full items-center justify-center text-slate-400">
+                        <UserRound size={48} />
+                      </div>
                   )}
                 </div>
 

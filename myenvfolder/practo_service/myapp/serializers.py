@@ -51,6 +51,7 @@ class DoctorSerializer(serializers.ModelSerializer):
     commission_percent = serializers.SerializerMethodField()
     commission_amount = serializers.SerializerMethodField()
     doctor_receives = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Doctor
@@ -67,9 +68,16 @@ class DoctorSerializer(serializers.ModelSerializer):
             "doctor_receives",
             "bio",
             "image",
+            "image_url",
             "is_approved",
         ]
         read_only_fields = ["user"]
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        if obj.image and request:
+            return request.build_absolute_uri(obj.image.url)
+        return None
 
     def get_commission_percent(self, obj):
         return "7.00"
