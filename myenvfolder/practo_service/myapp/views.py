@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.db import transaction
 from django.db.models import Sum
 from django.utils import timezone
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from rest_framework import serializers
 from rest_framework.decorators import action, api_view, permission_classes
@@ -74,10 +75,10 @@ class IsPatientOrAdmin(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and str(request.user.role).upper() in ["PATIENT", "ADMIN"]
 
-
 class DoctorViewSet(ModelViewSet):
     queryset = Doctor.objects.select_related("user").all()
     serializer_class = DoctorSerializer
+    parser_classes = [MultiPartParser, FormParser]
     filterset_fields = ["specialization", "experience", "is_approved"]
     search_fields = ["doctor_name", "user__first_name", "user__last_name", "specialization"]
     ordering_fields = ["consultation_fee", "experience"]
@@ -115,7 +116,6 @@ class DoctorViewSet(ModelViewSet):
         doctor.is_approved = False
         doctor.save()
         return Response({"message": "Doctor rejected successfully"})
-
 
 class AppointmentViewSet(ModelViewSet):
     serializer_class = AppointmentSerializer
