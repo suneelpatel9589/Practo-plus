@@ -1,0 +1,11 @@
+
+.env
+
+include/
+__pycache__/
+*.pyc
+db.sqlite3
+Scripts/x
+Lib/site-packages/
+myenvfolder/
+staticfiles/
