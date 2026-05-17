@@ -197,7 +197,7 @@ function EditDoctor() {
                             preview ||
                             (oldImage?.startsWith("http")
                               ? oldImage
-                              : `${import.meta.env.VITE_API_URL}/media/${oldImage}`)
+                              : `${import.meta.env.VITE_API_URL}${oldImage}`)
                           }
                           alt="Doctor"
                           className="h-full w-full object-cover"
