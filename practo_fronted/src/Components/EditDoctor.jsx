@@ -190,24 +190,24 @@ function EditDoctor() {
               <div className="grid gap-5 lg:grid-cols-[220px_1fr]">
                 <div className="rounded-[28px] border border-slate-100 bg-slate-50/80 p-5 shadow-sm">
                   <div className="flex flex-col items-center text-center">
-                    <div className="h-32 w-32 overflow-hidden rounded-full bg-white shadow-md ring-4 ring-white">
-                      {preview || oldImage ? (
-                        <img
-                          src={
-                            preview ||
-                            (oldImage?.startsWith("http")
-                              ? oldImage
-                              : `${import.meta.env.VITE_API_URL}${oldImage}`)
-                          }
-                          alt="Doctor"
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-slate-400">
-                          <UserRound size={48} />
-                        </div>
-                      )}
-                    </div>
+                  <div className="h-32 w-32 overflow-hidden rounded-full bg-white shadow-md ring-4 ring-white">
+                    {preview || oldImage ? (
+                     <img
+                       src={
+                        preview ||
+                     (oldImage?.startsWith("http")
+                      ? oldImage
+                    : `${import.meta.env.VITE_API_URL}${oldImage}`)
+                   }
+                  alt="Doctor"
+                  className="h-full w-full rounded-full object-cover object-center"
+                      />
+                     ) : (
+                          <div className="flex h-full w-full items-center justify-center text-slate-400">
+                    <UserRound size={48} />
+                            </div>
+                                )}
+                     </div>
 
                     <label className="mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100">
                       <ImagePlus size={16} />
