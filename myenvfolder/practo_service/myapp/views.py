@@ -836,7 +836,7 @@ def send_otp(request):
             phone=phone,
             role=role,
         )
-
+        print("Testing....................")
         send_mail(
             "Practo Plus OTP",
             f"Your OTP is {otp_code}",
@@ -844,7 +844,7 @@ def send_otp(request):
             [email],
             fail_silently=False,
         )
-
+        print("Mail_send")
         return Response({"message": "OTP sent successfully"}, status=200)
 
     except Exception as e:
