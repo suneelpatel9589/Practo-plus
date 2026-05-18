@@ -327,7 +327,7 @@ function Appoiment() {
                     rows="5"
                     value={form.symptoms}
                     onChange={handleChange}
-                    placeholder="Apni problem ya symptoms likhiye..."
+                    placeholder="Describe your symptoms..."
                     className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none"
                   />
                 </div>
