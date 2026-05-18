@@ -126,9 +126,16 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+CORS_ALLOW_ALL_ORIGINS = False
+
 CORS_ALLOWED_ORIGINS = [
+    "https://practo-plus.vercel.app",
     "http://localhost:5173",
-    "http://127.0.0.1:5173",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://practo-plus.vercel.app",
+    "https://practo-plus.onrender.com",
 ]
 
 CORS_ALLOW_METHODS = (
@@ -149,9 +156,6 @@ CORS_ALLOW_HEADERS = (
     "x-requested-with",
 )
 
-
-# CORS
-CORS_ALLOW_ALL_ORIGINS = True
 
 
 
