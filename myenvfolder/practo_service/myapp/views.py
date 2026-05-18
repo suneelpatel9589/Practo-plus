@@ -13,7 +13,7 @@ from django.db import transaction
 from django.db.models import Sum
 from django.utils import timezone
 from rest_framework.parsers import MultiPartParser, FormParser
-
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated, BasePermission
@@ -809,6 +809,7 @@ def generate_otp():
     return str(random.randint(100000, 999999))
 
 
+@csrf_exempt
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def send_otp(request):
