@@ -8,15 +8,10 @@ pymysql.install_as_MySQLdb()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Local development ke liye .env file load karega
 load_dotenv(BASE_DIR / ".env")
 
-# ==============================================================================
-# SECURITY & DEBUG CONFIGURATION
-# ==============================================================================
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-# Production par agar environment variable nahi milega toh automatic False rahega
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
@@ -25,9 +20,6 @@ ALLOWED_HOSTS = [
     "practo-plus.onrender.com",
 ]
 
-# ==============================================================================
-# APPLICATION DEFINITION
-# ==============================================================================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -85,9 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'practo_service.wsgi.application'
 
-# ==============================================================================
-# DATABASE CONFIGURATION (MySQL)
-# ==============================================================================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -124,9 +113,6 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
 }
 
-# ==============================================================================
-# STATIC & MEDIA FILES CONFIGURATION (Whitenoise & Cloudinary)
-# ==============================================================================
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -148,9 +134,6 @@ STORAGES = {
     },
 }
 
-# ==============================================================================
-# CORS & CSRF CONFIGURATION
-# ==============================================================================
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
@@ -181,15 +164,11 @@ CORS_ALLOW_HEADERS = (
     "x-requested-with",
 )
 
-# ==============================================================================
-# EMAIL (SMTP) CONFIGURATION - Gmail
-# ==============================================================================
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-# Timeout ko 10 seconds kiya hai taaki lamba lag hone par app crash na ho
 EMAIL_TIMEOUT = 10  
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER") 
@@ -198,8 +177,6 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 
-# ==============================================================================
-# THIRD-PARTY PAYMENT (Razorpay)
-# ==============================================================================
+
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
