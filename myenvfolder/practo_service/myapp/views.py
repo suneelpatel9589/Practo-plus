@@ -54,7 +54,7 @@ from .serializers import (
 User = get_user_model()
 
 class OTPSendRequestSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True, help_text="User ka email id")
+    email = serializers.EmailField(required=True, help_text="User email for registration")
     password = serializers.CharField(required=True, write_only=True, help_text=" password")
 
 class OTPVerifyRequestSerializer(serializers.Serializer):
