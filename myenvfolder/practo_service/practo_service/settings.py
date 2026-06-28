@@ -8,11 +8,15 @@ pymysql.install_as_MySQLdb()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Local development ke liye .env file load karega
 load_dotenv(BASE_DIR / ".env")
 
-# SECURITY
+# ==============================================================================
+# SECURITY & DEBUG CONFIGURATION
+# ==============================================================================
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+# Production par agar environment variable nahi milega toh automatic False rahega
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
@@ -21,7 +25,9 @@ ALLOWED_HOSTS = [
     "practo-plus.onrender.com",
 ]
 
-# Applications
+# ==============================================================================
+# APPLICATION DEFINITION
+# ==============================================================================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,11 +43,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_filters',
     'drf_yasg',
-    
-    
 ]
 
-# DRF
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
@@ -51,13 +54,10 @@ REST_FRAMEWORK = {
     ],
 }
 
-# Middleware
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -85,7 +85,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'practo_service.wsgi.application'
 
-# DATABASE
+# ==============================================================================
+# DATABASE CONFIGURATION (MySQL)
+# ==============================================================================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -94,7 +96,6 @@ DATABASES = {
         'PASSWORD': os.getenv("DB_PASSWORD"),
         'HOST': os.getenv("DB_HOST"),
         'PORT': os.getenv("DB_PORT"),
-
         'OPTIONS': {
             'ssl': {'ssl-mode': 'REQUIRED'},
         },
@@ -112,20 +113,44 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# Custom User Model
+AUTH_USER_MODEL = 'myapp.User'
+
+# JWT Settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+}
+
+# ==============================================================================
+# STATIC & MEDIA FILES CONFIGURATION (Whitenoise & Cloudinary)
+# ==============================================================================
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-
-
-# Media
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv("CLOUDINARY_CLOUD_NAME"),
+    'API_KEY': os.getenv("CLOUDINARY_API_KEY"),
+    'API_SECRET': os.getenv("CLOUDINARY_API_SECRET"),
+}
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# ==============================================================================
+# CORS & CSRF CONFIGURATION
+# ==============================================================================
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
@@ -156,23 +181,16 @@ CORS_ALLOW_HEADERS = (
     "x-requested-with",
 )
 
-
-
-
-# Custom User
-AUTH_USER_MODEL = 'myapp.User'
-
-# JWT
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-}
-
-# Email - Resend API
+# ==============================================================================
+# EMAIL (SMTP) CONFIGURATION - Gmail
+# ==============================================================================
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_TIMEOUT = 30
+
+# Timeout ko 10 seconds kiya hai taaki lamba lag hone par app crash na ho
+EMAIL_TIMEOUT = 10  
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER") 
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD") 
@@ -180,22 +198,8 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 
-# Razorpay
+# ==============================================================================
+# THIRD-PARTY PAYMENT (Razorpay)
+# ==============================================================================
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
-
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv("CLOUDINARY_CLOUD_NAME"),
-    'API_KEY': os.getenv("CLOUDINARY_API_KEY"),
-    'API_SECRET': os.getenv("CLOUDINARY_API_SECRET"),
-}
-
-STORAGES = {
-    "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
