@@ -3,9 +3,11 @@ import random
 import hmac
 import hashlib
 from datetime import timedelta
-from .models import Order, OrderItem, Payment
+from .models import Order, OrderItem, Payment, LabBooking, LabBookingItem, Appointment,User, Doctor
+from .serializers import OrderSerializer, PaymentSerializer, LabBookingSerializer, AppointmentSerializer, UserSerializer, DoctorSerializer
 import requests
 import razorpay
+from drf_yasg.utils import swagger_auto_schema
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
@@ -21,6 +23,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+
 
 from .models import (
     Doctor,
@@ -50,7 +53,14 @@ from .serializers import (
 
 User = get_user_model()
 
+class OTPSendRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True, help_text="User ka email id")
+    password = serializers.CharField(required=True, write_only=True, help_text=" password")
 
+class OTPVerifyRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True, help_text="enter the email id used for registration")
+    otp = serializers.CharField(required=True, help_text="enter the OTP received in email") 
+    
 class IsPatient(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and str(request.user.role).upper() == "PATIENT"
@@ -808,21 +818,30 @@ class VerifyRazorpayPaymentView(APIView):
 def generate_otp():
     return str(random.randint(100000, 999999))
 
-
-@csrf_exempt
+@swagger_auto_schema(
+    method='post',
+    request_body=OTPSendRequestSerializer,
+    responses={200: "OTP sent successfully", 400: "Bad Request"}
+)
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def send_otp(request):
     try:
         email = request.data.get("email")
         password = request.data.get("password")
-        first_name = request.data.get("first_name", "")
-        last_name = request.data.get("last_name", "")
-        phone = request.data.get("phone", "")
-        role = request.data.get("role", "PATIENT")
 
         if not email or not password:
-            return Response({"error": "Email and password required"}, status=400)
+            return Response(
+                {"error": "Email and password required"},
+                status=400
+            )
+
+        # CHECK USER ALREADY REGISTERED
+        if User.objects.filter(email=email).exists():
+            return Response(
+                {"error": "Email already verified"},
+                status=400
+            )
 
         otp_code = generate_otp()
 
@@ -832,24 +851,40 @@ def send_otp(request):
             email=email,
             otp_code=otp_code,
             password=password,
-            first_name=first_name,
-            last_name=last_name,
-            phone=phone,
-            role=role,
         )
-        print("Testing....................")
+
         send_mail(
-            "Practo Plus OTP",
-            f"Your OTP is {otp_code}",
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
+            subject="[Practo Plus] OTP Verification Code",
+            message=(
+                f"Hello,\n\n"
+                f"Your One-Time Password (OTP) for Practo Plus verification is:\n\n"
+                f"👉  {otp_code}  <-\n\n"
+                f"This code is confidential and valid for 10 minutes. Please do not share it with anyone.\n\n"
+                f"Regards,\n"
+                f"Team Practo Plus"
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
             fail_silently=False,
         )
-        print("Mail_send")
-        return Response({"message": "OTP sent successfully"}, status=200)
+
+        return Response(
+            {"message": "OTP sent successfully"},
+            status=200
+        )
 
     except Exception as e:
-        return Response({"error": str(e)}, status=500)
+        print("MAIL ERROR:", e)
+
+        return Response(
+            {"error": str(e)},
+            status=500
+        )
+@swagger_auto_schema(
+    method='post',
+    request_body=OTPVerifyRequestSerializer,
+    responses={201: "User registered successfully", 400: "Invalid/Expired OTP"}
+)
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def verify_otp(request):
